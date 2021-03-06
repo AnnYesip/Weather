@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CurrentWeather{
+struct CurrentWeather {
     let cityName: String
     
     let weatherDescriptionText: String
@@ -59,6 +59,7 @@ struct CurrentWeather{
     
     let sunrise: Int
     var sunriseString: String {
+
         let currentSunrise = setupData(data: sunrise)
         return currentSunrise
     }
@@ -85,12 +86,13 @@ struct CurrentWeather{
     func setupData( data: Int) -> String{
         let date = NSDate(timeIntervalSince1970: TimeInterval(data))
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm a"
+        formatter.dateFormat = "HH:mm"
         let currentSunrise = formatter.string(from: date as Date)
         return currentSunrise
     }
+
     
-    
+//    MARK: - Init
     init?(currentWeatherData: CurrentWeatherData) {
         cityName = currentWeatherData.name
         temperature = currentWeatherData.main.temp
@@ -107,8 +109,7 @@ struct CurrentWeather{
         pressure = currentWeatherData.main.pressure
         deg = currentWeatherData.wind.deg
     }
-    
-    
+ 
 }
 
 

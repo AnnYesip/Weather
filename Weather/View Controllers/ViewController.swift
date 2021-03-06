@@ -6,13 +6,61 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate {
+class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, UICollectionViewDelegate {
+    
+    static var secondData = [List]()
+
+    
+    let cities = ["San Francisco", "Moscow", "New York", "Stambul", "Viena"]
+    
+    var saveCities = [String]()
+    
+    lazy var locationManager: CLLocationManager = {
+        let lm = CLLocationManager()
+        lm.delegate = self
+        lm.desiredAccuracy = kCLLocationAccuracyKilometer
+        lm.requestWhenInUseAuthorization()
+        return lm
+    }()
     
 var networkWeatherManager = NetworkWeatherManager()
     
     var weatherData = [String]()
+    
+    // MARK:  - Setup Navigation Controller
+        @objc func search() {
+            presentAlertController(withTitle: "What the weather?", message: "Enter city name", style: .alert){ [unowned self] city in
+                self.networkWeatherManager.fetchCurrentWeather(forRequestType: .cityName(city: city))
+            }
+        }
+        
+        @objc func currentLocation(){
+            if CLLocationManager.locationServicesEnabled() {
+                locationManager.requestLocation()
+            }
+        }
 
+        func setupNavigationController(){
+            navigationController?.navigationBar.backgroundColor = .clear
+            navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+            navigationController?.navigationBar.shadowImage = UIImage()
+
+            
+    //        buttons
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
+                                                                target: self,
+                                                                action: #selector(search) )
+            navigationItem.rightBarButtonItem?.tintColor = .white
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Current city",
+                                                               style: .done,
+                                                               target: self,
+                                                               action: #selector(currentLocation))
+            navigationItem.leftBarButtonItem?.tintColor = .white
+
+        }
+      
      // MARK: - Interface
 
     let cityNameLabel: UILabel = {
@@ -90,6 +138,17 @@ var networkWeatherManager = NetworkWeatherManager()
         return table
     }()
     
+    let collertionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collection = UICollectionView(frame: .init(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
+        layout.minimumInteritemSpacing = 10
+          layout.minimumLineSpacing = 10
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.reuseIdentifier)
+        return collection
+    }()
+    
     
     lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
@@ -121,6 +180,10 @@ var networkWeatherManager = NetworkWeatherManager()
         scrollView.addSubview(cloudiness)
         scrollView.addSubview(stackView)
         scrollView.addSubview(tableView)
+        scrollView.addSubview(collertionView)
+        
+        collertionView.delegate = self
+        collertionView.dataSource = self
         tableView.dataSource = self
         tableView.delegate = self
         scrollView.delegate = self
@@ -129,13 +192,14 @@ var networkWeatherManager = NetworkWeatherManager()
         networkWeatherManager.onCompletion = { [weak self] currentWeather in
             guard let self = self else { return }
             DispatchQueue.main.async {
+                self.collertionView.reloadData()
                 self.tableView.reloadData()
                 self.updateInterfaceWith(weather: currentWeather)
             }
         }
-        networkWeatherManager.fetchCurrentWeather(forCity: "Moscow")
-        
-
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.requestLocation()
+        }
         
         
     }
@@ -153,8 +217,9 @@ var networkWeatherManager = NetworkWeatherManager()
         setupStackView()
         setupTableView()
         setupScrollView()
-
         setupTempMinMax()
+        setupCollectionView()
+
     }
     
     
@@ -173,60 +238,31 @@ var networkWeatherManager = NetworkWeatherManager()
             self.weatherComment.text = "\(weather.weatherDescriptionText)"
             self.tempMinMax.text = "\(weather.temperatureMinString)° / \(weather.temperatureMaxString)°"
             
-//            self.weatherData.reverse()
+            
             self.weatherData.removeAll()
-            self.weatherData.append("deg \(weather.degString)")
-            self.weatherData.append("sunrise \(weather.sunriseString)")
-            self.weatherData.append("sunset \(weather.sunsetString)")
-            self.weatherData.append("pressure \(weather.pressure)")
+            self.weatherData.append("deg              \(weather.degString)")
+            self.weatherData.append("sunrise          \(weather.sunriseString)")
+            self.weatherData.append("sunset          \(weather.sunsetString)")
+            self.weatherData.append("pressure       \(weather.pressure)")
             self.tableView.reloadData()
             
-        }
-
-    }
-    
-    
-// MARK:  - Setup Navigation Controller
-    
-    
-    @objc func search() {
-        presentAlertController(withTitle: "What the weather?", message: "Enter city name", style: .alert){ [unowned self] city in
-            self.networkWeatherManager.fetchCurrentWeather(forCity: city)
+            
+            
         }
         
-    }
-
-    @objc func addNewCity() {
-        print("addNewCity open ")
-    }
-
-    func setupNavigationController(){
-        navigationController?.navigationBar.backgroundColor = .clear
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = true
-
         
-        
-//        buttons
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
-                                                            target: self,
-                                                            action: #selector(search) )
-        navigationItem.rightBarButtonItem?.tintColor = .white
-
-
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add ,
-                                                           target: self,
-                                                           action: #selector(addNewCity))
-        navigationItem.leftBarButtonItem?.tintColor = .white
 
     }
     
+
+    
+    
+  
     // MARK: - Setup Backgroung
     
     func setGradientBackground() {
-        let colorTop =  UIColor(red: 60.0/255.0, green: 157.0/255.0, blue: 208.0/255.0, alpha: 1.0).cgColor
-        let colorBottom = UIColor(red: 8.0/255.0, green: 108.0/255.0, blue: 162.0/255.0, alpha: 1.0).cgColor
+        let colorTop =  UIColor(red: 66.0/255.0, green: 130.0/255.0, blue: 211.0/255.0, alpha: 1.0).cgColor
+        let colorBottom = UIColor(red: 5.0/255.0, green: 50.0/255.0, blue: 109.0/255.0, alpha: 1.0).cgColor
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [colorTop, colorBottom]
         gradientLayer.locations = [0.0, 1.0]
@@ -234,3 +270,6 @@ var networkWeatherManager = NetworkWeatherManager()
         self.view.layer.insertSublayer(gradientLayer, at: 0)
     }
 }
+
+
+

@@ -20,7 +20,6 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath as IndexPath)
         cell.textLabel?.text = weatherData[indexPath.row]
-//        cell.textLabel!.text = "\(indexPath.row)"
         cell.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         return cell
     }

@@ -34,7 +34,6 @@ extension ViewController {
     
     
     func setupImageOfWeather() {
-//        imageOfWeather.backgroundColor = .systemGray
         imageOfWeather.topAnchor.constraint(equalTo: weatherComment.topAnchor, constant: 100).isActive = true
         imageOfWeather.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -80).isActive = true
         imageOfWeather.transform = CGAffineTransform( scaleX: 6, y: 6)
@@ -42,7 +41,6 @@ extension ViewController {
     }
     
     func setupTemp(){
-//        temperatupe.backgroundColor = .systemGray2
         temperatupe.textColor = .white
         temperatupe.font = .systemFont(ofSize: 90)
         temperatupe.topAnchor.constraint(equalTo: weatherComment.topAnchor, constant: 65).isActive = true

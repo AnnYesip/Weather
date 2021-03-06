@@ -10,11 +10,12 @@ import UIKit
 
 extension ViewController{
     
+
+    
     func presentAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completionHandler: @escaping (String) -> Void) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         alert.addTextField{ tf in
-            let cities = ["San Francisco", "Moscow", "New York", "Stambul", "Viena"]
-            tf.placeholder = cities.randomElement()
+            tf.placeholder = self.cities.randomElement()
         }
         let find = UIAlertAction(title: "Find", style: .default) { action in
             let textField = alert.textFields?.first
@@ -30,6 +31,8 @@ extension ViewController{
         alert.addAction(cancel)
         present(alert, animated: true, completion: nil)
    }
+    
+    
     
     
     
