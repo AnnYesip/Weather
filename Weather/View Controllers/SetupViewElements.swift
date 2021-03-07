@@ -19,7 +19,7 @@ extension ViewController {
     
     func setupCurrentData(){
         currentData.text = "today"
-        currentData.textColor = .black
+        currentData.textColor = .white
         currentData.font = .systemFont(ofSize: 20)
         currentData.topAnchor.constraint(equalTo: cityNameLabel.topAnchor,constant: 50).isActive = true
         currentData.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -49,7 +49,7 @@ extension ViewController {
     
     
         func setupTempMinMax(){
-            tempMinMax.textColor = .black
+            tempMinMax.textColor = .white
             tempMinMax.numberOfLines = 0
             tempMinMax.font = .systemFont(ofSize: 18)
             tempMinMax.topAnchor.constraint(equalTo: temperatupe.topAnchor, constant: 100).isActive = true
@@ -105,6 +105,12 @@ extension ViewController {
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
+    func setupIndicator(){
+        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        activityIndicator.color = .white
+        activityIndicator.transform = CGAffineTransform(scaleX: 2, y: 2)
     }
 
 

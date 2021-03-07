@@ -10,7 +10,6 @@ import CoreLocation
 
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, UICollectionViewDelegate {
     
-    static var secondData = [List]()
 
     
     let cities = ["San Francisco", "Moscow", "New York", "Stambul", "Viena"]
@@ -138,24 +137,20 @@ var networkWeatherManager = NetworkWeatherManager()
         return table
     }()
     
-    let collertionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let collection = UICollectionView(frame: .init(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
-        layout.minimumInteritemSpacing = 10
-          layout.minimumLineSpacing = 10
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.reuseIdentifier)
-        return collection
-    }()
     
     
     lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.delegate = self
-        scroll.contentSize = CGSize(width: self.view.frame.size.width, height: 1000)
+        scroll.contentSize = CGSize(width: self.view.frame.size.width, height: 800)
         return scroll
+    }()
+    
+    let activityIndicator: UIActivityIndicatorView = {
+       let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
     }()
     
 
@@ -180,21 +175,32 @@ var networkWeatherManager = NetworkWeatherManager()
         scrollView.addSubview(cloudiness)
         scrollView.addSubview(stackView)
         scrollView.addSubview(tableView)
-        scrollView.addSubview(collertionView)
+        scrollView.addSubview(activityIndicator)
+
         
-        collertionView.delegate = self
-        collertionView.dataSource = self
         tableView.dataSource = self
         tableView.delegate = self
         scrollView.delegate = self
         
+        currentData.isHidden = true
+        stackView.isHidden = true
+        tableView.isHidden = true
         
         networkWeatherManager.onCompletion = { [weak self] currentWeather in
             guard let self = self else { return }
             DispatchQueue.main.async {
-                self.collertionView.reloadData()
+                self.activityIndicator.isHidden = false
+                self.activityIndicator.startAnimating()
                 self.tableView.reloadData()
-                self.updateInterfaceWith(weather: currentWeather)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                    self.updateInterfaceWith(weather: currentWeather)
+                    self.currentData.isHidden = false
+                    self.stackView.isHidden = false
+                    self.tableView.isHidden = false
+                    self.activityIndicator.isHidden = true
+                    self.activityIndicator.stopAnimating()
+                }
+                
             }
         }
         if CLLocationManager.locationServicesEnabled() {
@@ -218,7 +224,7 @@ var networkWeatherManager = NetworkWeatherManager()
         setupTableView()
         setupScrollView()
         setupTempMinMax()
-        setupCollectionView()
+        setupIndicator()
 
     }
     
@@ -237,7 +243,6 @@ var networkWeatherManager = NetworkWeatherManager()
             self.cloudiness.text = "cloudiness \n     \(weather.clouds) %"
             self.weatherComment.text = "\(weather.weatherDescriptionText)"
             self.tempMinMax.text = "\(weather.temperatureMinString)° / \(weather.temperatureMaxString)°"
-            
             
             self.weatherData.removeAll()
             self.weatherData.append("deg              \(weather.degString)")

@@ -22,17 +22,12 @@ class NetworkWeatherManager{
         switch requestType {
         case .cityName(city: let city):
             guard let firstUrl = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(apiId)&units=metric") else { return  }
-            guard let secondUrl = URL(string: "https://api.openweathermap.org/data/2.5/forecast?q=\(city)&appid=\(apiId)") else { return }
-            
             performRequest(withURLString: firstUrl)
-            fetchdata(url: secondUrl)
             
             
         case .coordinate(let latitude, let longitude):
             guard let firstUrl = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(apiId)&units=metric") else { return  }
-            guard let secondUrl = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(apiId)") else { return }
             performRequest(withURLString: firstUrl)
-            fetchdata(url: secondUrl)
             
         }
     }
@@ -57,26 +52,6 @@ class NetworkWeatherManager{
         
     }
     
-//    MARK: - Second data
-    
-    
-    
-    func fetchdata(url: URL){
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data, let _ = response else { return }
-            
-            do {
-                let json = try JSONDecoder().decode(SecondData.self, from: data)
-                json.list.forEach { (list) in
-                    ViewController.secondData.append(list)
-                }
-                print(json)
-            } catch let error {
-                print(error)
-            }
-            
-        }.resume()
 
-    }
 
 }

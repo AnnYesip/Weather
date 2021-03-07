@@ -14,7 +14,6 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         weatherData.count
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -27,7 +26,7 @@ extension ViewController: UITableViewDataSource {
     // MARK: - setup Table View
 
     func setupTableView(){
-        tableView.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 70).isActive = true
+        tableView.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 80).isActive = true
         tableView.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
         tableView.heightAnchor.constraint(equalTo: stackView.heightAnchor, constant: 118).isActive = true
         tableView.centerXAnchor.constraint(equalTo: stackView.centerXAnchor).isActive = true

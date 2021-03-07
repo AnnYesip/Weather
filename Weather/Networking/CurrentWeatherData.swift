@@ -29,18 +29,18 @@ struct Clouds2: Codable {
 
 // MARK: - Coord
 struct Coord: Codable {
-    let lon,
-        lat: Double
+    let lon: Double
+    let lat: Double
 }
 
 // MARK: - Main
 struct Main: Codable {
-    let temp,
-        feelsLike,
-        tempMin,
-        tempMax: Double
-    let pressure,
-        humidity: Int
+    let temp: Double
+    let feelsLike: Double
+    let tempMin: Double
+    let tempMax: Double
+    let pressure: Int
+    let humidity: Int
 
     enum CodingKeys: String, CodingKey {
         case temp

@@ -21,7 +21,7 @@ extension ViewController{
             let textField = alert.textFields?.first
             guard let cityName = textField?.text else { return }
             if cityName != "" {
-                let city = cityName.split(separator: " ").joined(separator: "%20") // соединяем строку при таких городах как New York
+                let city = cityName.split(separator: " ").joined(separator: "%20")
                 completionHandler(city)
             }
         }
