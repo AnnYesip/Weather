@@ -10,6 +10,12 @@ import Foundation
 struct CurrentWeather {
     let cityName: String
     
+    let currentData: Int
+    var currentDataString: String{
+        let cd = setupData(data: currentData)
+        return cd
+    }
+    
     let weatherDescriptionText: String
     
     let temperature: Double
@@ -77,6 +83,7 @@ struct CurrentWeather {
     var pressureString: String {
         return String(pressure)
     }
+    
     let deg: Int
     var degString: String {
          String(deg)
@@ -95,6 +102,7 @@ struct CurrentWeather {
 //    MARK: - Init
     init?(currentWeatherData: CurrentWeatherData) {
         cityName = currentWeatherData.name
+        currentData = currentWeatherData.dt
         temperature = currentWeatherData.main.temp
         temperatureMin = currentWeatherData.main.tempMin
         temperatureMax = currentWeatherData.main.tempMax

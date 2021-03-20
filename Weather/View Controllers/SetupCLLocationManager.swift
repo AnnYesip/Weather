@@ -18,14 +18,11 @@ extension ViewController: CLLocationManagerDelegate {
         let longitude = location.coordinate.longitude
         
         networkWeatherManager.fetchCurrentWeather(forRequestType: .coordinate(latitude: latitude, longitude: longitude))
-        
-
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
+        assertionFailure("Error at \(#file)")
     }
-    
-    
     
 }

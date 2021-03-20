@@ -17,7 +17,7 @@ class NetworkWeatherManager{
     
     var onCompletion: ((CurrentWeather) -> Void)?
     
-    func fetchCurrentWeather(forRequestType requestType: RequestType){
+    func fetchCurrentWeather(forRequestType requestType: RequestType) {
         let urlString: String
         switch requestType {
         case .cityName(city: let city):
